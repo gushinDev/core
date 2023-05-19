@@ -1,0 +1,5 @@
+CREATE DATABASE IF NOT EXISTS `lms`;
+CREATE DATABASE IF NOT EXISTS `lms-auth`;
+CREATE USER 'local'@'%' IDENTIFIED WITH mysql_native_password BY 'local';
+GRANT ALL PRIVILEGES ON *.* TO 'local'@'%';
+FLUSH PRIVILEGES;
