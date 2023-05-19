@@ -5,21 +5,17 @@ include ./.env
 rabbitmq-hosts:
 	grep -q "127.0.0.1  ${LOCAL_HOSTNAME_RABBITMQ}" "${HOSTS}" || echo '127.0.0.1  ${LOCAL_HOSTNAME_RABBITMQ}' | sudo tee -a "${HOSTS}"
 mailhog-hosts:
-	grep -q "127.0.0.1  ${LOCAL_HOSTNAME_MAILHOG}" "${HOSTS}" || echo '127.0.0.1  ${LOCAL_HOSTNAME_MAILHOG}' | sudo tee -a "${HOSTS}"
+	grep -q "127.0.0.1 ${LOCAL_HOSTNAME_MAILHOG}" "${HOSTS}" || echo '127.0.0.1  ${LOCAL_HOSTNAME_MAILHOG}' | sudo tee -a "${HOSTS}"
 redis-commander-hosts:
 	grep -q "127.0.0.1  ${LOCAL_HOSTNAME_REDIS_COMMANDER}" "${HOSTS}" || echo '127.0.0.1  ${LOCAL_HOSTNAME_REDIS_COMMANDER}' | sudo tee -a "${HOSTS}"
-
 lms-hosts:
-	grep -q "127.0.0.1  ${LOCAL_HOSTNAME_SBS_GENERAL}" "${HOSTS}" || echo '127.0.0.1  ${LOCAL_HOSTNAME_SBS_GENERAL}' | sudo tee -a "${HOSTS}"
-	grep -q "127.0.0.1  partner-${LOCAL_HOSTNAME_SBS_GENERAL}" "${HOSTS}" || echo '127.0.0.1  partner-${LOCAL_HOSTNAME_SBS_GENERAL}' | sudo tee -a "${HOSTS}"
+	grep -q "127.0.0.1  ${LOCAL_HOSTNAME_LMS}" "${HOSTS}" || echo '127.0.0.1  ${LOCAL_HOSTNAME_LMS}' | sudo tee -a "${HOSTS}"
 lms-git-clone:
 	- git clone ${LMS_REPO}:gushinDev/lms.git -b ${BRANCH_LMS} ${LOCAL_CODE_PATH_LMS}
 lms-git-pull:
 	cd ${LOCAL_CODE_PATH_LMS} && git pull
 lms-git-checkout:
 	cd ${LOCAL_CODE_PATH_LMS} && git checkout ${BRANCH_LMS}
-sbs-general-rm-code:
-	rm -rf ${LOCAL_CODE_PATH_LMS}
 lms-env-copy:
 	yes | cp -rf env-example/.lms.env.example ${LOCAL_CODE_PATH_LMS}/.env
 lms-install:
@@ -27,7 +23,7 @@ lms-install:
 	docker-compose exec lms composer install  | tee ./logs/composer-logs/lms-install.log
 lms-migrate-seed:
 	docker-compose exec -T lms php artisan migrate | tee ./logs/migrate-logs/lms-migrate.log
-	docker-compose exec -T lms php artisan db:seed --class=LocalSeeder | tee ./logs/migrate-logs/lms-migrate-seed.log
+	docker-compose exec -T lms php artisan db:seed | tee ./logs/migrate-logs/lms-migrate-seed.log
 
 hosts:
 	make \
@@ -53,14 +49,13 @@ migrate:
 migrate-seed:
 	make \
 		lms-migrate-seed
-#lms: hosts git-clone git-checkout env-copy network build up install migrate-seed
+lms: hosts git-clone git-checkout env-copy network build up install migrate-seed
 
 lms: hosts git-clone git-checkout env-copy network build up
-	echo "Local Docker Environment installed" && \
-    echo "lms-app: http://${LOCAL_HOSTNAME_LMS}"
+    echo "lms-app: ${LOCAL_HOSTNAME_LMS}"
 
 network:
-	docker network inspect lms_app-network >/dev/null 2>&1 || docker network create lms_app-network
+	docker network inspect app-network >/dev/null 2>&1 || docker network create app-network
 
 build:
 	docker-compose build

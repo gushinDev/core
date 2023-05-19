@@ -1,0 +1,8 @@
+/logs/composer-logs/lms-install.log
+/.env
+/.idea/.gitignore
+/.idea/core.iml
+/.idea/modules.xml
+/.idea/php.xml
+/.idea/sqldialects.xml
+/.idea/vcs.xml
