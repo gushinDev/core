@@ -6,3 +6,6 @@
 /.idea/php.xml
 /.idea/sqldialects.xml
 /.idea/vcs.xml
+/logs/migrate-logs/lms-migrate.log
+/logs/migrate-logs/lms-migrate-seed.log
+/src/
