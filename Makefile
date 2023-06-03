@@ -11,11 +11,11 @@ redis-commander-hosts:
 lms-hosts:
 	grep -q "127.0.0.1  ${LOCAL_HOSTNAME_LMS}" "${HOSTS}" || echo '127.0.0.1  ${LOCAL_HOSTNAME_LMS}' | sudo tee -a "${HOSTS}"
 lms-git-clone:
-	- git clone ${REPOSITORY}:gushinDev/lms.git -b ${BRANCH_LMS} ${LOCAL_CODE_PATH_LMS}
+	git clone git@github.com:gushinDev/lms.git -b ${MAIN_BRANCH} ${LOCAL_CODE_PATH_LMS}
 lms-git-pull:
 	cd ${LOCAL_CODE_PATH_LMS} && git pull
 lms-git-checkout:
-	cd ${LOCAL_CODE_PATH_LMS} && git checkout ${BRANCH_LMS}
+	cd ${LOCAL_CODE_PATH_LMS} && git checkout ${MAIN_BRANCH}
 lms-env-copy:
 	yes | cp -rf env-example/.lms.env.example ${LOCAL_CODE_PATH_LMS}/.env
 lms-install:
