@@ -138,12 +138,14 @@ services:
       context: "."
       dockerfile: ./images/php/Dockerfile
       args: *app-args
-    command: [ "php", "artisan", "queue:work" ]
+    command: [ "php", "artisan", "queue:listen" ]
     container_name: "workers"
     volumes:
       - ${SSH_PATH}:/home/${USER}/.ssh:rw
       - ${LOCAL_CODE_PATH_LMS}:/var/www
       - ./configs/nginx/:/etc/nginx/conf.d/:ro
+    depends_on:
+      - lms
     networks:
       - app-network
 

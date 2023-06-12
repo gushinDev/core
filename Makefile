@@ -25,59 +25,51 @@ lms-migrate-seed:
 	docker-compose exec -T lms php artisan migrate | tee ./logs/migrate-logs/lms-migrate.log
 	docker-compose exec -T lms php artisan db:seed | tee ./logs/migrate-logs/lms-migrate-seed.log
 
-notifications-hosts:
-	grep -q "127.0.0.1  ${LOCAL_HOSTNAME_NOTIFICATIONS}" "${HOSTS}" || echo '127.0.0.1  ${LOCAL_HOSTNAME_NOTIFICATIONS}' | sudo tee -a "${HOSTS}"
-notifications-git-clone:
-	- git clone git@github.com:gushinDev/notifications.git -b ${MAIN_BRANCH} ${LOCAL_CODE_PATH_NOTIFICATIONS}
-notifications-git-pull:
-	cd ${LOCAL_CODE_PATH_NOTIFICATIONS} && git pull
-notifications-git-checkout:
-	cd ${LOCAL_CODE_PATH_NOTIFICATIONS} && git checkout ${MAIN_BRANCH}
-notifications-env-copy:
-	yes | cp -rf env-example/.lms-notifications.env.example ${LOCAL_CODE_PATH_NOTIFICATIONS}/.env
-notifications-install:
-	docker-compose exec notifications composer update  | tee ./logs/composer-logs/notifications-install.log
-	docker-compose exec notifications composer install  | tee ./logs/composer-logs/notifications-install.log
-notifications-migrate-seed:
-	docker-compose exec -T notifications php artisan migrate | tee ./logs/migrate-logs/notifications-migrate.log
-	docker-compose exec -T notifications php artisan db:seed | tee ./logs/migrate-logs/notifications-migrate-seed.log
+# notifications-hosts:
+# 	grep -q "127.0.0.1  ${LOCAL_HOSTNAME_NOTIFICATIONS}" "${HOSTS}" || echo '127.0.0.1  ${LOCAL_HOSTNAME_NOTIFICATIONS}' | sudo tee -a "${HOSTS}"
+# notifications-git-clone:
+# 	- git clone git@github.com:gushinDev/notifications.git -b ${MAIN_BRANCH} ${LOCAL_CODE_PATH_NOTIFICATIONS}
+# notifications-git-pull:
+# 	cd ${LOCAL_CODE_PATH_NOTIFICATIONS} && git pull
+# notifications-git-checkout:
+# 	cd ${LOCAL_CODE_PATH_NOTIFICATIONS} && git checkout ${MAIN_BRANCH}
+# notifications-env-copy:
+# 	yes | cp -rf env-example/.lms-notifications.env.example ${LOCAL_CODE_PATH_NOTIFICATIONS}/.env
+# notifications-install:
+# 	docker-compose exec notifications composer update  | tee ./logs/composer-logs/notifications-install.log
+# 	docker-compose exec notifications composer install  | tee ./logs/composer-logs/notifications-install.log
+# notifications-migrate-seed:
+# 	docker-compose exec -T notifications php artisan migrate | tee ./logs/migrate-logs/notifications-migrate.log
+# 	docker-compose exec -T notifications php artisan db:seed | tee ./logs/migrate-logs/notifications-migrate-seed.log
 
 hosts:
 	make \
-		lms-hosts \
-		notifications-hosts
+		lms-hosts
 git-clone:
 	make \
-		lms-git-clone \
-		notifications-git-clone
+		lms-git-clone
 git-pull:
 	make \
-		lms-git-pull \
-		notifications-git-pull
+		lms-git-pull
 git-checkout:
 	make \
-		lms-git-checkout \
-		notifications-git-checkout
+		lms-git-checkout
 
 env-copy:
 	make \
-		lms-env-copy \
-		notifications-env-copy
+		lms-env-copy
 
 install:
 	make \
-		lms-install \
-		notifications-install
+		lms-install
 
 migrate:
 	make \
-		lms-migrate \
-		notifications-migrate
+		lms-migrate
 
 migrate-seed:
 	make \
-		lms-migrate-seed \
-		notifications-migrate-seed
+		lms-migrate-seed
 
 lms: hosts git-clone git-checkout env-copy network build up install migrate-seed
 
